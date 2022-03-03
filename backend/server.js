@@ -4,25 +4,24 @@ const express = require("express");
 const cors = require("cors");
 
 require("dotenv").config();
-
+const { auth } = require("./controller/auth");
+const { protect } = require("./middleware/auth");
+const { admin } = require("./middleware/admin");
 const {
 	createAppointment,
 	getAppointment,
 	deleteAppointment,
+	getAllAppointment,
 } = require("./controller/controller.crud.appintment");
 
 const {
-	createDoctor,
-	getDoctor,
-	deleteDoctor,
-} = require("./controller/controller.crud.Doctors");
-
-const {
-	createUser,
+	createUSer,
 	getUser,
-	deleteUser,
-} = require("./controller/controller.crud.User");
+	getUserProfile,
+} = require("./controller/controllers.crud.users");
+
 const app = express();
+const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 app.use(cors());
 
@@ -34,7 +33,7 @@ app.listen(PORT, () => {
 });
 
 mongoose.connect(
-	"mongodb+srv://Aa1791994:Aa1791994@cluster0.eqhsz.mongodb.net/Fruits?retryWrites=true&w=majority",
+	"mongodb+srv://Aa1791994:Aa1791994@cluster0.eqhsz.mongodb.net/Node_auth?retryWrites=true&w=majority",
 	{
 		useNewUrlParser: true,
 
@@ -43,13 +42,18 @@ mongoose.connect(
 );
 
 app.get("/appointment", getAppointment);
+app.get("/getAllAppointment", getAllAppointment);
 app.post("/appointment", createAppointment);
 app.delete("/appointment/:id", deleteAppointment);
 
-app.get("/doctor", getDoctor);
-app.post("/doctor", createDoctor);
-app.delete("/doctor/:id", deleteDoctor);
-
+app.post("/user", createUSer);
 app.get("/user", getUser);
-app.post("/user", createUser);
-app.delete("/user/:id", deleteUser);
+app.get("/user/:id", getUserProfile);
+app.post("/auth", auth);
+
+app.all("*", (req, res, next) => {
+	res.status(404).json({
+		status: "false",
+		message: "page not found",
+	});
+});

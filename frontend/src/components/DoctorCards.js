@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Doctors from "../jasonfiles/doctor.json";
 import { Card, Button, Row } from "react-bootstrap";
-import { Redirect, Link } from "react-router-dom";
-import DoctorProfile from "./DoctorProfile";
-import axios from "axios";
+import { Redirect, Link, useHistory } from "react-router-dom";
+import { ProfileContext } from "../ProfileContext";
 
 //do something...
 
-const Doctor = ({ setDoctorData, searchTerm, DoctorList, setDoctorList }) => {
-	console.log(DoctorList);
-	function showProfile(doctor) {
-		setDoctorData(doctor);
-	}
+const Doctor = ({ setDoctorData, searchTerm, DoctorList, DoctorData }) => {
+	const ProfileTerm = useContext(ProfileContext);
+	let history = useHistory();
+	useEffect(() => {
+		if (!localStorage.getItem("authToken")) {
+			console.log("not author");
+			history.push("/login");
+		}
+	}, []);
 
 	return DoctorList.filter((doctor) => {
 		if (searchTerm === "") {
@@ -26,8 +29,11 @@ const Doctor = ({ setDoctorData, searchTerm, DoctorList, setDoctorList }) => {
 					<Card.Title>{doctor.name}</Card.Title>
 					<Card.Title>{doctor.email}</Card.Title>
 
-					<Link className="button " to={`/DoctorProfile/${doctor._id}`}>
-						<Button variant="primary" onClick={() => showProfile(doctor)}>
+					<Link className="button " to={`/user/${doctor._id}`}>
+						<Button
+							variant="primary"
+							onClick={() => ProfileTerm.showProfilehundler(doctor._id)}
+						>
 							DoctorProfile
 						</Button>
 					</Link>

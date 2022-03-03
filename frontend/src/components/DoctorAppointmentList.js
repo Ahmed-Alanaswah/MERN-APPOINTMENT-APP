@@ -1,20 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Table, Button } from "react-bootstrap";
 import AppointmentList from "../jasonfiles/appointments.json";
+import { useHistory } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 function DoctorAppointmentList(props) {
+	let history = useHistory();
+	useEffect(() => {
+		if (!localStorage.getItem("authToken")) {
+			console.log("not author");
+			history.push("/login");
+		}
+	}, []);
 	const deleteContactHandler = (id) => {
 		props.getContactId(id);
 	};
 	return (
 		<div>
 			<div className="container" style={{ marginTop: "50px" }}>
-				<Link to="/" style={{ color: "#fff" }}>
-					<Button style={{ marginBottom: "50px" }} variant="primary">
-						Go to Home
-					</Button>
-				</Link>
 				<Table striped bordered hover>
 					<thead>
 						<tr>
@@ -31,7 +34,7 @@ function DoctorAppointmentList(props) {
 							return (
 								<>
 									<tr>
-										<td>{data.id}</td>
+										<td>{data.doctorId}</td>
 										<td>{data.name}</td>
 										<td>{data.email}</td>
 										<td>{data.date}</td>
